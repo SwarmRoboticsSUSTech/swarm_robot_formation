@@ -1,0 +1,12 @@
+<launch>
+    <node pkg="formation" type="discussion_node"  name="discussion" ns = "robot16"  output="screen" >
+        <remap from="/robot16/none_leader_topic" to="/none_leader_topic" />
+    </node>
+    <node pkg="formation" type="discussion_node"  name="discussion" ns = "robot17"  output="screen" >
+        <remap from="/robot17/none_leader_topic" to="/none_leader_topic" />
+    </node>
+
+    <node pkg="formation" type="discussion_node"  name="discussion" ns = "robot18"  output="screen" >
+        <remap from="/robot18/none_leader_topic" to="/none_leader_topic" />
+    </node>
+</launch>

@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="formation" type="discussion_node"  name="discussion" ns = "robot9"  output="screen" >
+        <remap from="/robot9/none_leader_topic" to="/none_leader_topic" />
+    </node>
+</launch>
