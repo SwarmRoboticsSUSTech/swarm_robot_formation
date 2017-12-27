@@ -1,3 +1,6 @@
+# Swarm Robot Formation
+&emsp;&emsp;本项目需要使用到[move_base](http://wiki.ros.org/move_base)导航包，请预先安装
+## 下面本项目的使用教程
 #### 一、Arduino的代码
 1、下载turtlebot的Arduino代码：</br>
 &emsp;&emsp;https://github.com/SwarmRoboticsSUSTechOPAL/turtlebot3_arduino_sustc</br>
