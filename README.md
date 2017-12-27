@@ -3,7 +3,7 @@
 &emsp;&emsp;https://github.com/SwarmRoboticsSUSTechOPAL/turtlebot3_arduino_sustc</br>
 
 2、根据如下[教程](http://emanual.robotis.com/docs/en/platform/turtlebot3/opencr1_0_software_setup/#usb-port-settings)配置环境:</br>
-http://emanual.robotis.com/docs/en/platform/turtlebot3/opencr1_0_software_setup/#usb-port-settings</br>
+&emsp;&emsp;http://emanual.robotis.com/docs/en/platform/turtlebot3/opencr1_0_software_setup/#usb-port-settings</br>
 
 3、在代码中搜索“SUSTC”，修改相应行的代码，如：</br>
 ```
@@ -16,7 +16,7 @@ joint_states.header.frame_id = " robot1_base_footprint "; // "base_footprint" SU
 #### 二、ROS的代码
 1、下载turtlebot的ROS代码：</br>
 &emsp;&emsp;https://github.com/SwarmRoboticsSUSTechOPAL/swarm_robot_formation</br>
-https://github.com/SwarmRoboticsSUSTechOPAL/tuttlebot3_sustc</br>
+&emsp;&emsp;https://github.com/SwarmRoboticsSUSTechOPAL/tuttlebot3_sustc</br>
 
 2、如果想使用QTCreator进行ROS开发，可以按照如下方式配置QTCreator开发环境：</br>
 &emsp;&emsp;https://ros-industrial.github.io/ros_qtc_plugin/_source/How-to-Install-Users.html</br>
