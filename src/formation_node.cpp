@@ -14,9 +14,8 @@
 #include <iostream>
 #include <string>
 
-bool startFormationFlag = false;
-double yawOfPath;
-geometry_msgs::PoseStamped globalPlanPose;
+bool g_start_formation_flag = false;
+geometry_msgs::PoseStamped g_leader_plan_pose;
 actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction>* g_ac;
 ros::Publisher g_sendplan_pub;
 ros::ServiceClient g_clear_map_sc;
@@ -43,21 +42,21 @@ void startCommandReceived(const geometry_msgs::PoseStamped& msg)
 void getGlobalPlanOfLeader(const nav_msgs::Path& gui_path)
 {
   ROS_INFO("Receive global plan of leader.");
-  startFormationFlag = true;
+  g_start_formation_flag = true;
   int sizeOfPathPose = (int)gui_path.poses.size();
 //  ROS_INFO("gui_path.poses.size(): %d", sizeOfPathPose);
   if(sizeOfPathPose >= 40)
   {
-    globalPlanPose = gui_path.poses[(gui_path.poses.size()-1)/2];
+    g_leader_plan_pose = gui_path.poses[(gui_path.poses.size()-1)/2];
   }
   else
   {
-    globalPlanPose = gui_path.poses[gui_path.poses.size()-1];
+    g_leader_plan_pose = gui_path.poses[gui_path.poses.size()-1];
   }
-//  ROS_INFO("gui_path.poses[end]: %f %f %f, %f %f %f %f", globalPlanPose.pose.position.x, globalPlanPose.pose.position.y, globalPlanPose.pose.position.z,
-//           globalPlanPose.pose.orientation.x, globalPlanPose.pose.orientation.y, globalPlanPose.pose.orientation.z, globalPlanPose.pose.orientation.w);
+//  ROS_INFO("gui_path.poses[end]: %f %f %f, %f %f %f %f", g_leader_plan_pose.pose.position.x, g_leader_plan_pose.pose.position.y, g_leader_plan_pose.pose.position.z,
+//           g_leader_plan_pose.pose.orientation.x, g_leader_plan_pose.pose.orientation.y, g_leader_plan_pose.pose.orientation.z, g_leader_plan_pose.pose.orientation.w);
 
-//  ROS_INFO("yawOfPath_odom: %f", tf::getYaw(globalPlanPose.pose.orientation));
+//  ROS_INFO("yawOfPath_odom: %f", tf::getYaw(g_leader_plan_pose.pose.orientation));
 }
 
 void getSelfGlobalPlan(const nav_msgs::Path& gui_path)
@@ -120,13 +119,13 @@ int main(int argc, char **argv)
   ros::ServiceClient get_position_sc = nh.serviceClient<formation::PositionRequest>(ns + "/position_requestion");
 
   ros::Timer timer = nh.createTimer(ros::Duration(5), clearCostMapTimer);
-
+  
   ros::Duration(1).sleep();
   //request the position by argument
   get_position_sc.call(req_position, res_position);
   if(leader_id != res_position.leader_id)
   {
-    startFormationFlag = false;
+    g_start_formation_flag = false;
   }
   leader_id = res_position.leader_id;
   leader_id_stream.str("");
@@ -151,7 +150,7 @@ int main(int argc, char **argv)
     position = res_position.position;
     if(leader_id != res_position.leader_id)
     {
-      startFormationFlag = false;
+      g_start_formation_flag = false;
     }
     leader_id = res_position.leader_id;
     leader_id_stream.str("");
@@ -165,11 +164,11 @@ int main(int argc, char **argv)
       g_isleader = false;
     }
 
-    if(!g_isleader && startFormationFlag)
+    if(!g_isleader && g_start_formation_flag)
     {
       //robot n get the desired position depend on leader.
       geometry_msgs::PoseStamped desiredPosition;
-      leaderRerence.getDesiredPosition(desiredPosition, position , leader_id, globalPlanPose);
+      leaderRerence.getDesiredPosition(desiredPosition, position , leader_id, g_leader_plan_pose);
       move_base_msgs::MoveBaseGoal goal;
       goal.target_pose.header = desiredPosition.header;
       goal.target_pose.pose = desiredPosition.pose;

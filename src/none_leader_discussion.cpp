@@ -112,7 +112,7 @@ int findVacancy()
   }
   else
   {
-    // Because of the use "vacancyPosition --" in "for()" circulation.
+    // Because the use of "vacancyPosition --" in "for()" circulation.
     return vacancyPosition + 1;
   }
 }
