@@ -1,4 +1,6 @@
-#include "heartbeatinfo.h"
+#include "formation/discussion/heartbeatinfo.h"
+
+using namespace formation;
 
 HeartBeatInfo::HeartBeatInfo()
 {

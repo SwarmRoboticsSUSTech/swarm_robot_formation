@@ -1,6 +1,7 @@
 #ifndef HEARTBEAT_H
 #define HEARTBEAT_H
 
+namespace formation {
 
 class HeartBeatInfo
 {
@@ -20,4 +21,5 @@ private:
   bool Timeout;
 };
 
+} /* namespace formation */
 #endif // HEARTBEAT_H

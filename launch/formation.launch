@@ -1,10 +1,10 @@
 <launch>
-    <node pkg="formation" type="formation_node"  name="formation" ns = "robot3"  output="screen" >  <!--SUSTC TODO-->
-        <remap from="/robot3/leader_plan" to="/leader_plan" />  <!--SUSTC TODO-->
+    <node pkg="formation" type="formation_node"  name="formation" ns = "robot5"  output="screen" >  <!--SUSTC TODO-->
+        <remap from="/robot5/leader_plan" to="/leader_plan" />  <!--SUSTC TODO-->
     </node>
 
-    <node pkg="formation" type="discussion_node"  name="discussion" ns = "robot3"  output="screen" >    <!--SUSTC TODO-->
-        <remap from="/robot3/none_leader_topic" to="/none_leader_topic" />  <!--SUSTC TODO-->
+    <node pkg="formation" type="discussion_node"  name="discussion" ns = "robot5"  output="screen" >    <!--SUSTC TODO-->
+        <remap from="/robot5/none_leader_topic" to="/none_leader_topic" />  <!--SUSTC TODO-->
     </node>
 
 </launch>

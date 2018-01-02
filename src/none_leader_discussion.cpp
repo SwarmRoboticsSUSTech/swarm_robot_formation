@@ -1,17 +1,20 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include "formation/ChatContent.h"
-#include "heartbeatinfo.h"
-#include "desirepositioninfo.h"
+#include "formation/reference/leader_reference.h"
+#include "formation/discussion/desirepositioninfo.h"
+#include "formation/discussion/heartbeatinfo.h"
 #include "formation/PositionRequest.h"
 
-static std::string SCRAMBLE = "scramble";
-static std::string HEARTBEAT = "heartbeat";
-static std::string REJECT = "reject";
-static int CANNOT_FIND_VACANCY = -1;
-static int LATEST_TIME = 10;
+using namespace formation;
 
-std::vector<desirepositioninfo> g_desirePositions;
+const std::string SCRAMBLE = "scramble";
+const std::string HEARTBEAT = "heartbeat";
+const std::string REJECT = "reject";
+const int CANNOT_FIND_VACANCY = -1;
+const int LATEST_TIME = 10;
+
+std::vector<DesirePositionInfo> g_desirePositions;
 std::vector<HeartBeatInfo> g_grabbedPositions;
 int g_scramble_position;
 int g_desire_position;
@@ -86,7 +89,7 @@ int getScramblePosition()
  * */
 int findVacancy()
 {
-  desirepositioninfo dinfo = *(g_desirePositions.begin());
+  DesirePositionInfo dinfo = *(g_desirePositions.begin());
   int vacancyPosition = dinfo.getPosition() - 1;
   HeartBeatInfo info = g_grabbedPositions[vacancyPosition];
 
@@ -99,9 +102,9 @@ int findVacancy()
       break;
     }
   }
-//  ROS_INFO("dinfo.getPosition() - 1:%d", dinfo.getPosition() - 1);
-//  ROS_INFO("vacancyPosition:%d", vacancyPosition);
-//  ROS_INFO("g_scramble_position:%d", g_scramble_position);
+  ROS_INFO("dinfo.getPosition() - 1:%d", dinfo.getPosition() - 1);
+  ROS_INFO("vacancyPosition:%d", vacancyPosition);
+  ROS_INFO("g_scramble_position:%d", g_scramble_position);
 
   // If "dinfo.getPosition() - 1 == vacancyPosition", there are not vacancy positions in front of self position.
   // "g_scramble_position != -1 && g_scramble_position ==vacancyPosition", we don't scranble the same position last time scrambled.
@@ -125,7 +128,7 @@ void receiver(const formation::ChatContent& receivedMsg)
     if(receivedMsg.robot_id == g_my_id && g_scramble_count == 0 && receivedMsg.desire_position == g_scramble_position)
     {
       //Authorized, and update desired position table
-      desirepositioninfo dinfo(receivedMsg.desire_position, 0);
+      DesirePositionInfo dinfo(receivedMsg.desire_position, 0);
       // Insert desired position into the zore position of the table.
       g_desirePositions.insert(g_desirePositions.begin(), 1, dinfo);
       //write into grabbed position table
@@ -140,7 +143,7 @@ void receiver(const formation::ChatContent& receivedMsg)
     //send reject message
     for(int i = 0; i< g_desirePositions.size(); i++)
     {
-      desirepositioninfo dinfo = g_desirePositions[i];
+      DesirePositionInfo dinfo = g_desirePositions[i];
       if(dinfo.getPosition() == receivedMsg.desire_position && receivedMsg.robot_id != g_my_id)
       {
         //REJECT
@@ -174,7 +177,7 @@ void receiver(const formation::ChatContent& receivedMsg)
     if(receivedMsg.robot_id != g_my_id && receivedMsg.talk_to == g_my_id)
     {
       //update desired position table, delete the reject position
-      desirepositioninfo dinfo;
+      DesirePositionInfo dinfo;
       for(int i = 0; i < g_desirePositions.size(); i++)
       {
         dinfo = g_desirePositions[i];
@@ -199,7 +202,7 @@ void receiver(const formation::ChatContent& receivedMsg)
       else if(g_desirePositions.size() == 1)
       {
         //Reset the heartbeat info of the only one desired position
-        desirepositioninfo dinfo = g_desirePositions[0];
+        DesirePositionInfo dinfo = g_desirePositions[0];
         HeartBeatInfo info = g_grabbedPositions[dinfo.getPosition()];
         info.setTime(0);
         info.setTimeout(false);
@@ -210,7 +213,7 @@ void receiver(const formation::ChatContent& receivedMsg)
       //we don't want to timeing the frist desired position.
       if(g_desirePositions.size() > 0)
       {
-        desirepositioninfo dinfo = g_desirePositions[0];
+        DesirePositionInfo dinfo = g_desirePositions[0];
         dinfo.setTime(dinfo.getTime() + 1);
         g_desirePositions[0] = dinfo;
       }
@@ -235,7 +238,7 @@ void timerCallback(const ros::TimerEvent& event)
     {
       //HEARTBEAT
       formation::ChatContent sendMsg;
-      desirepositioninfo dinfo = g_desirePositions[i];
+      DesirePositionInfo dinfo = g_desirePositions[i];
       sendMsg.msg_type = HEARTBEAT;
       sendMsg.robot_id = g_my_id;
       sendMsg.desire_position = dinfo.getPosition();
@@ -259,7 +262,7 @@ void timerCallback(const ros::TimerEvent& event)
     if(g_desirePositions.size() == 1)
     {
       g_scramble_position = findVacancy();
-//      ROS_INFO("g_scramble_position:%d", g_scramble_position);
+      ROS_INFO("g_scramble_position:%d", g_scramble_position);
       if(g_scramble_position > -1)
       {
         //SCRAMBLE
@@ -267,7 +270,7 @@ void timerCallback(const ros::TimerEvent& event)
         sendMsg.msg_type = SCRAMBLE;
         sendMsg.robot_id = g_my_id;
         sendMsg.desire_position = g_scramble_position;
-//        ROS_INFO("have vacancy, send scramble!");
+        ROS_INFO("have vacancy, send scramble!");
         g_chatter_pub.publish(sendMsg);
         g_scramble_count = 0;
       }
@@ -328,9 +331,9 @@ int main(int argc, char **argv)
   {
     if(g_desirePositions.size() > 0)
     {
-      desirepositioninfo dinfo = *(g_desirePositions.begin());
+      DesirePositionInfo dinfo = *(g_desirePositions.begin());
       g_desire_position = dinfo.getPosition();
-//      ROS_INFO("Robot%d Desired Position: %d", g_my_id, g_desire_position);
+      ROS_INFO("Robot%d Desired Position: %d", g_my_id, g_desire_position);
     }
     ros::spinOnce();
     loop_rate.sleep();

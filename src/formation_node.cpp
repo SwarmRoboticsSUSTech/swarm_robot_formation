@@ -1,6 +1,6 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
-#include "leader_reference.h"
+#include "formation/reference/leader_reference.h"
 #include "formation/PositionRequest.h"
 
 #include <tf/transform_listener.h>
@@ -14,9 +14,11 @@
 #include <iostream>
 #include <string>
 
+using namespace formation;
+
 bool g_start_formation_flag = false;
 geometry_msgs::PoseStamped g_leader_plan_pose;
-actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction>* g_ac;
+actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> *g_ac = NULL;
 ros::Publisher g_sendplan_pub;
 ros::ServiceClient g_clear_map_sc;
 bool g_isleader = false;
@@ -69,9 +71,13 @@ void getSelfGlobalPlan(const nav_msgs::Path& gui_path)
 
 void shutdown(int sig)
 {
-  ros::Duration(1).sleep(); // sleep for  a second
+  ros::Duration(1).sleep(); // sleep for one second
   ROS_INFO("formation node ended!");
-  g_ac->~SimpleActionClient();
+  if(g_ac != NULL)
+  {
+    delete g_ac;
+    g_ac = NULL;
+  }
   ros::shutdown();
 }
 
@@ -200,6 +206,10 @@ int main(int argc, char **argv)
     loop_rate.sleep();
   }
 
-  g_ac->~SimpleActionClient();
+  if(g_ac != NULL)
+  {
+    delete g_ac;
+    g_ac = NULL;
+  }
   return 0;
 }

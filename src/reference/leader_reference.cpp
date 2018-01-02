@@ -1,9 +1,9 @@
-#include "leader_reference.h"
+#include "formation/reference/leader_reference.h"
 #include <stdexcept>
 #include <math.h>
 #include <sstream>
 
-namespace formation {
+using namespace formation;
 
 LeaderRerence::LeaderRerence(tf::TransformListener* tf, Formation pF, double pDS)
 {
@@ -192,4 +192,3 @@ bool LeaderRerence::getDesiredPosition(geometry_msgs::PoseStamped& outputPositio
   return true;
 }
 
-} /* namespace formation */
