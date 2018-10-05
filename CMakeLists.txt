@@ -39,7 +39,7 @@ roslaunch_add_file_check(launch)
 ##     * add a build_depend tag for "message_generation"
 ##     * add a run_depend tag for "message_runtime"
 ## * In this file (CMakeLists.txt):
-##   * add "message_generation" and every package in MSG_DEP_SET to
+##   * add "message_  generation" and every package in MSG_DEP_SET to
 ##     find_package(catkin REQUIRED COMPONENTS ...)
 ##   * add "message_runtime" and every package in MSG_DEP_SET to
 ##     catkin_package(CATKIN_DEPENDS ...)
